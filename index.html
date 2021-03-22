@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js"></script>
+    <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        html,body{
+            margin:0;
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+    
+
+
+    <script>
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
+        camera.position.set( 0, 0, 100 );
+        camera.lookAt( 0, 0, 0 );
+
+        const scene = new THREE.Scene();
+
+        const controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+        const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+
+        const points = [];
+        points.push( new THREE.Vector3( 10, 20, 10 ) );
+
+        const geometry = new THREE.BufferGeometry().setFromPoints( points );
+        
+        const line = new THREE.Line( geometry, material );
+        scene.add( line );
+
+
+
+        setInterval(() => {
+            calculateNextLorenzPoint();
+            geometry.setFromPoints(points);
+
+        }, 30/1000);
+        
+        var render = function(){
+            requestAnimationFrame( render );
+            renderer.render(scene, camera);
+            controls.update();
+        }
+
+        const o = 10;
+        const p = 28;
+        const b = 8/3;
+        const dt = 100;
+                
+        function calculateNextLorenzPoint(){
+            const point = points[points.length -1];
+            const x = point.x;
+            const y = point.y;
+            const z = point.z;
+
+            const dx = (o*(y-x)) / dt;
+            const dy = (x*(p-z)-y) / dt;
+            const dz = (x*y - b*z) / dt;
+
+            points.push(new THREE.Vector3(x+dx, y+dy, z+dz));
+        }
+        
+
+        render();
+    </script>
+
+</body>
+</html>
